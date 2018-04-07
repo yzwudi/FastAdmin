@@ -175,7 +175,6 @@ class Command extends Backend
                 $result = $this->doexecute($commandtype, $argv);
 
             } catch (\Exception $e) {
-                echo 'aa';exit;
                 var_dump($e->getMessage());exit;
             }
 
