@@ -171,7 +171,14 @@ class Command extends Backend
 
         }
         if ($action == 'execute') {
-            $result = $this->doexecute($commandtype, $argv);
+            try {
+                $result = $this->doexecute($commandtype, $argv);
+
+            } catch (\Exception $e) {
+                echo 'aa';exit;
+                var_dump($e->getMessage());exit;
+            }
+
             $this->success("", null, ['result' => $result]);
         } else {
             $this->success("", null, ['command' => "php think {$commandtype} " . implode(' ', $argv)]);
@@ -191,7 +198,9 @@ class Command extends Backend
             'params'      => json_encode($argv),
             'command'     => "php think {$commandtype} " . implode(' ', $argv),
             'executetime' => time(),
+            'content' => '',
         ];
+//        echo json_encode($data, JSON_UNESCAPED_UNICODE);exit;
         $this->model->save($data);
         try {
             $command->run($input, $output);
