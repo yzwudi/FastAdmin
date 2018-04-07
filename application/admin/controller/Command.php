@@ -173,7 +173,6 @@ class Command extends Backend
         if ($action == 'execute') {
             try {
                 $result = $this->doexecute($commandtype, $argv);
-
             } catch (\Exception $e) {
                 var_dump($e->getMessage());exit;
             }
