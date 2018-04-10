@@ -14,6 +14,8 @@
 // 建议将admin.php改成其它任意的文件名，同时修改config.php中的'deny_module_list',把admin模块也添加进去
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
+$env_conf = parse_ini_file(__DIR__ . '/../env.ini');
+define("ENV_STAGE", $env_conf['ENV']);
 
 // 判断是否安装FastAdmin
 if (!is_file(APP_PATH . 'admin/command/Install/install.lock'))
