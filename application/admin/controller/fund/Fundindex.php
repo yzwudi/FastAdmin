@@ -57,7 +57,7 @@ class Fundindex extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','index_name','index','turn_volume','macd','dif','dea','date']);
+                $row->visible(['id','index_name','status','index','turn_volume','macd','dif','dea','date']);
                 
             }
             $list = collection($list)->toArray();

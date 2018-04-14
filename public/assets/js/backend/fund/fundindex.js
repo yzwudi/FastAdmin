@@ -26,6 +26,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id')},
                         {field: 'index_name', title: __('Index_name')},
+                        {field: 'status', title: __('Status'), visible:false, searchList: {"1":__('Status 1')}},
+                        {field: 'status_text', title: __('Status'), operate:false},
                         {field: 'index', title: __('Index'), operate:'BETWEEN'},
                         {field: 'turn_volume', title: __('Turn_volume'), operate:'BETWEEN'},
                         {field: 'macd', title: __('Macd'), operate:'BETWEEN'},
