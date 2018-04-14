@@ -25,7 +25,10 @@ class FundIndexInfo extends Model
     
     public function getStatusList()
     {
-        return ['1' => __('Status 1')];
+        return [
+            '1' => __('有效'),
+            '0' => __('无效')
+        ];
     }     
 
 

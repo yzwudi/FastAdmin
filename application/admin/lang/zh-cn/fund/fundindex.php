@@ -3,8 +3,8 @@
 return [
     'Id'  =>  'ID',
     'Code'  =>  '指数代码',
-    'Index_name'  =>  '指数名称(多选)',
-    'Index_name 0003001'  =>  '沪深300',
+    'Index_name'  =>  '指数名称',
+    'Index_name 沪深300'  =>  '沪深300',
     'Index_name 3990062'  =>  '创业板指',
     'Index_name 0000011'  =>  '上证指数',
     'Index_name 3990012'  =>  '深证成指',
@@ -20,5 +20,5 @@ return [
     'Dea'  =>  'dea',
     'Create_time'  =>  '创建时间',
     'Update_time'  =>  '更新时间',
-    'Date'  =>  '日期(date)'
+    'Date'  =>  '日期'
 ];

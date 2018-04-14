@@ -2,6 +2,7 @@
 
 namespace app\admin\controller\fund;
 
+use app\admin\model\FundIndexInfo;
 use app\common\controller\Backend;
 
 /**
@@ -15,11 +16,13 @@ class Fundindex extends Backend
     /**
      * FundIndexInfo模型对象
      */
+    /** @var FundIndexInfo model */
     protected $model = null;
 
     public function _initialize()
     {
         parent::_initialize();
+
         $this->model = model('FundIndexInfo');
         $this->view->assign("statusList", $this->model->getStatusList());
     }
