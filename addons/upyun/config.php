@@ -24,7 +24,7 @@ return array(
         'content' =>
         array(
         ),
-        'value'   => 'http://yourcdnurl.com',
+        'value'   => ENV_STAGE == 'prod' ? 'http://txy.fastadmin.com' : 'http://txy.beta.fastadmin.com',
         'rule'    => 'required',
         'msg'     => '',
         'tip'     => '',
