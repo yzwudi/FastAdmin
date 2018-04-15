@@ -160,6 +160,8 @@ return [
     'Third group'                                           => '三级管理组',
     'Second group 2'                                        => '二级管理组2',
     'Third group 2'                                         => '三级管理组2',
+    'Fund'                                                  => '基金工具',
+    'FundIndex'                                             => '指数详情',
     'Dashboard tips'                                        => '用于展示当前系统中的统计数据、统计报表及重要实时数据',
     'Config tips'                                           => '可以在此增改系统的变量和分组,也可以自定义分组和变量,如果需要删除请从数据库中删除',
     'Category tips'                                         => '用于统一管理网站的所有分类,分类可进行无限级分类',
