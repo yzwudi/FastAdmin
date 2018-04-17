@@ -61,7 +61,7 @@ class Fetch extends Controller
             $return = $this->formatCurlReturn($code, $name, $index_info, $macd_info);
         }
 
-        echo 'success_beta', PHP_EOL;
+        echo 'success_'.ENV_STAGE, PHP_EOL;
         exit;
     }
 
