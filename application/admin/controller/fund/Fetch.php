@@ -142,6 +142,7 @@ class Fetch extends Controller
 
 
         $money = 10000;
+        $add_money = 2000;
         $profit = 0;
         $have = false;
         $up_days = 0;
@@ -155,6 +156,10 @@ class Fetch extends Controller
 
         $can_buy = false;
         $can_sell = false;
+        $can_add = false;
+
+        $add_money_set = [];
+
         foreach ($result as $date => $value) {
             if (strtotime($date) < strtotime($start_date)) {
                 continue;
@@ -174,6 +179,16 @@ class Fetch extends Controller
                 $profit -= $money / 1000;
                 $buy_date = $date;
                 echo 'buy:'. $date. ' '. $index, PHP_EOL;
+            }
+
+            if ($can_add) {
+                $add_money_set[] = [
+                    'date' => $date,
+                    'index' => $index,
+                    'money' => $add_money,
+                ];
+                $profit -= $add_money / 1000;
+                echo 'add:'. $date. ' '. $index, PHP_EOL;
             }
 
             if ($can_sell) {
@@ -200,10 +215,17 @@ class Fetch extends Controller
                 $up_days = 0;
             }
 
-            if ($last_macd < -20 and !$have and $up_days == 1) {
-                $can_buy = true;
+            if ($last_macd < -20 and $up_days == 1) {
+                if ($have) {
+                    $can_add = ($index < $buy_index) ? true : false;
+                    $can_buy = false;
+                } else {
+                    $can_add = false;
+                    $can_buy = true;
+                }
             } else {
                 $can_buy = false;
+                $can_add = false;
             }
 
             if ($last_macd > 0 and $have and $down_days == 1 and $last_account > $sell_amount) {
