@@ -161,3 +161,54 @@ if (!function_exists('build_heading')) {
         return $result;
     }
 }
+
+if (!function_exists('is_inner_ip')) {
+    function is_inner_ip($ip = null)
+    {
+        static $result = [];
+        if ($ip === null) {
+            return false;
+        }
+        $inner_ips = ['111.201.34.217'];
+        $result[$ip] = in_array($ip, $inner_ips) ? true : false;
+        return $result[$ip];
+    }
+}
+
+function jdump($arr)
+{
+    echo json_encode($arr, JSON_UNESCAPED_UNICODE);
+}
+
+
+function croot3($num)
+{
+    $guess=$num/3;
+    while(abs($guess*$guess*$guess-$num)>=0.0000000001)
+    {
+        $guess=($num/$guess/$guess+2*$guess)/3;
+    }
+    return $guess;
+}
+
+function curl($url)
+{
+    $ch = curl_init();
+    // 2. 设置选项，包括URL
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch,CURLOPT_HEADER,0);
+    // 3. 执行并获取HTML文档内容
+    $output = curl_exec($ch);
+    if($output === FALSE ){
+        echo "CURL Error:".curl_error($ch);
+    }
+    // 4. 释放curl句柄
+    curl_close($ch);
+    return $output;
+}
+
+function getMillisecond() {
+    list($t1, $t2) = explode(' ', microtime());
+    return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
+}
