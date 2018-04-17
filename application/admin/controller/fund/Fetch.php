@@ -156,6 +156,9 @@ class Fetch extends Controller
         $can_buy = false;
         $can_sell = false;
         foreach ($result as $date => $value) {
+            if (strtotime($date) < strtotime($start_date)) {
+                continue;
+            }
             $macd  = $value['macd'];
             $index = $value['index'];
             $account = $value['turn_volume'];
