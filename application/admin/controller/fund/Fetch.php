@@ -195,24 +195,9 @@ class Fetch extends Controller
             }
 
             if ($can_sell) {
-                $current_profit = - $money / 1000;
                 $have = false;
-                $ratio = 1 + ($index - $buy_index) / $buy_index;
-                $cur_money = $money * $ratio;
-                $profit += ($cur_money - $money);
-                $current_profit += ($cur_money - $money);
-                $have_days = (strtotime($date) - strtotime($buy_date)) / 3600 / 24;
+                list ($have_days, $current_profit, $profit) = $this->computeProfit($profit, $money, $buy_index, $index, $buy_date, $date);
                 $total_have_days += $have_days + 2;
-                if ($have_days > 7) {
-                    $profit -= $cur_money / 2000;
-                    $current_profit -= $cur_money / 2000;
-                } else {
-                    $profit -= $cur_money / 100 * 1.5;
-                    $current_profit -= $cur_money / 100 * 1.5;
-                }
-                $profit -= $cur_money * 6 / 1000 * $have_days / 365;
-                $current_profit -= $cur_money * 6 / 1000 * $have_days / 365;
-//                list ($have_days, $current_profit, $profit) = $this->computeProfit();
                 echo 'sell:'. $date. ' '. $index. ' '. ($have_days). ' '. (round($current_profit, 2)) . ' '.
                     $this->computeXirr($money, [$date => $money + $current_profit], $buy_date), PHP_EOL;
                 $tmp_profit += $current_profit;
@@ -234,6 +219,7 @@ class Fetch extends Controller
                         }
                         $profit -= $add_cur_money * 6 / 1000 * $add_have_days / 365;
                         $add_current_profit -= $add_cur_money * 6 / 1000 * $add_have_days / 365;
+//                        list ($have_days, $current_profit, $profit) = $this->computeProfit($profit, $money, $buy_index, $index, $buy_date, $date);
                         echo 'add_sell:'. $date. ' '. $index. ' '. ($add_have_days). ' '. (round($add_current_profit, 2)). ' '.
                             $this->computeXirr($add_money, [$date => $add_money + $add_current_profit], $add_date), PHP_EOL;
                         $tmp_profit += $add_current_profit;
@@ -335,8 +321,23 @@ class Fetch extends Controller
         return round($radio * 100 , 2). '%';
     }
 
-    private function computeProfit()
+    private function computeProfit($profit, $money, $buy_index, $index, $buy_date, $date)
     {
-
+        $current_profit = - $money / 1000;
+        $ratio = 1 + ($index - $buy_index) / $buy_index;
+        $cur_money = $money * $ratio;
+        $profit += ($cur_money - $money);
+        $current_profit += ($cur_money - $money);
+        $have_days = (strtotime($date) - strtotime($buy_date)) / 3600 / 24;
+        if ($have_days > 7) {
+            $profit -= $cur_money / 2000;
+            $current_profit -= $cur_money / 2000;
+        } else {
+            $profit -= $cur_money / 100 * 1.5;
+            $current_profit -= $cur_money / 100 * 1.5;
+        }
+        $profit -= $cur_money * 6 / 1000 * $have_days / 365;
+        $current_profit -= $cur_money * 6 / 1000 * $have_days / 365;
+        return [$have_days, $current_profit, $profit];
     }
 }
