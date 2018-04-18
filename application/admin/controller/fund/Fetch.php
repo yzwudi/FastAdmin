@@ -12,6 +12,7 @@ use app\admin\model\FundIndexInfo;
 use think\Controller;
 use think\Db;
 use think\Request;
+use xirr\Calculator;
 
 /**
  *
@@ -264,5 +265,30 @@ class Fetch extends Controller
         echo '单次购买利润:'. ($money * (($end_index - $start_index) / $start_index)), PHP_EOL;
         echo '年化:'. (($profit + $empty_profit) / $money / (($total_have_days+$empty_days) / 365)), PHP_EOL;
         echo '单次购买年化:'. ($money * (($end_index - $start_index) / $start_index) / $money / (($total_have_days+$empty_days) / 365)), PHP_EOL;
+    }
+
+    public function test()
+    {
+        $principal = 100000;
+        $payment = 2400;
+        $guess = 0.10;
+        $startDate = '2017-04-30';
+        $calculator = new Calculator();
+
+        $payments = [
+            '2017-04-30' => $payment + 400,
+            '2017-05-31' => $payment,
+            '2017-06-30' => $payment,
+            '2017-07-31' => $payment,
+            // More dates
+            '2019-12-31' => $payment,
+            '2020-01-31' => $payment,
+            '2020-02-28' => $payment,
+            '2020-03-31' => 31200,
+        ];
+
+        $interest = $calculator->withSpecifiedPayments($principal, $startDate, $payments, $guess);
+
+        echo $interest; // 0.084870
     }
 }
