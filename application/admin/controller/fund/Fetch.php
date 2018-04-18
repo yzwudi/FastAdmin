@@ -161,6 +161,8 @@ class Fetch extends Controller
 
         $add_money_set = [];
 
+        $tmp_profit = 0;
+
         foreach ($result as $date => $value) {
             if (strtotime($date) < strtotime($start_date)) {
                 continue;
@@ -184,7 +186,7 @@ class Fetch extends Controller
 
             if ($can_add) {
                 $add_money_set[] = [
-                    'date' => $date,
+                    'date'  => $date,
                     'index' => $index,
                     'money' => $add_money,
                 ];
@@ -193,19 +195,51 @@ class Fetch extends Controller
             }
 
             if ($can_sell) {
+                $current_profit = - $money / 1000;
                 $have = false;
                 $ratio = 1 + ($index - $buy_index) / $buy_index;
                 $cur_money = $money * $ratio;
                 $profit += ($cur_money - $money);
+                $current_profit += ($cur_money - $money);
                 $have_days = (strtotime($date) - strtotime($buy_date)) / 3600 / 24;
                 $total_have_days += $have_days + 2;
                 if ($have_days > 7) {
                     $profit -= $cur_money / 2000;
+                    $current_profit -= $cur_money / 2000;
                 } else {
                     $profit -= $cur_money / 100 * 1.5;
+                    $current_profit -= $cur_money / 100 * 1.5;
                 }
                 $profit -= $cur_money * 6 / 1000 * $have_days / 365;
-                echo 'sell:'. $date. ' '. $index. ' '. ($have_days). ' '. ($cur_money - $money) , PHP_EOL;
+                $current_profit -= $cur_money * 6 / 1000 * $have_days / 365;
+//                list ($have_days, $current_profit, $profit) = $this->computeProfit();
+                echo 'sell:'. $date. ' '. $index. ' '. ($have_days). ' '. (round($current_profit, 2)) . ' '.
+                    $this->computeXirr($money, [$date => $money + $current_profit], $buy_date), PHP_EOL;
+                $tmp_profit += $current_profit;
+                if ($add_money_set) {
+                    foreach ($add_money_set as $k => $v) {
+                        $add_current_profit = - $add_money / 1000;
+                        list($add_date, $add_index, $add_money) = array_values($v);
+                        $add_radio = 1 + ($index - $add_index) / $add_index;
+                        $add_cur_money = $add_money * $add_radio;
+                        $profit += ($add_cur_money - $add_money);
+                        $add_current_profit += ($add_cur_money - $add_money);
+                        $add_have_days = (strtotime($date) - strtotime($add_date)) / 3600 / 24;
+                        if ($add_have_days > 7) {
+                            $profit -= $add_cur_money / 2000;
+                            $add_current_profit -= $add_cur_money / 2000;
+                        } else {
+                            $profit -= $add_cur_money / 100 * 1.5;
+                            $add_current_profit -= $add_cur_money / 100 * 1.5;
+                        }
+                        $profit -= $add_cur_money * 6 / 1000 * $add_have_days / 365;
+                        $add_current_profit -= $add_cur_money * 6 / 1000 * $add_have_days / 365;
+                        echo 'add_sell:'. $date. ' '. $index. ' '. ($add_have_days). ' '. (round($add_current_profit, 2)). ' '.
+                            $this->computeXirr($add_money, [$date => $add_money + $add_current_profit], $add_date), PHP_EOL;
+                        $tmp_profit += $add_current_profit;
+                    }
+                }
+                $add_money_set = [];
             }
 
             if ($macd > $last_macd) {
@@ -241,18 +275,24 @@ class Fetch extends Controller
             $last_account = $account;
         }
         if ($have) {
+            $current_profit = - $money / 1000;
             $total_have_days += (strtotime($end_date) - strtotime($buy_date)) / 3600 / 24;
             $ratio = 1 + ($index - $buy_index) / $buy_index;
             $cur_money = $money * $ratio;
             $profit += ($cur_money - $money);
+            $current_profit += ($cur_money - $money);
             $have_days = (strtotime($date) - strtotime($buy_date)) / 3600 / 24;
             if ($have_days > 7) {
                 $profit -= $cur_money / 2000;
+                $current_profit -= $cur_money / 2000;
             } else {
                 $profit -= $cur_money / 100 * 1.5;
+                $current_profit -= $cur_money / 100 * 1.5;
             }
             $profit -= $cur_money * 6 / 1000 * $have_days / 365;
+            $current_profit -= $cur_money * 6 / 1000 * $have_days / 365;
             echo '当前指数:'. $last_index, PHP_EOL;
+            $tmp_profit += $current_profit;
         }
 
         $empty_days = (strtotime($end_date) - strtotime($start_date)) / 3600 / 24 - $total_have_days;
@@ -265,30 +305,38 @@ class Fetch extends Controller
         echo '单次购买利润:'. ($money * (($end_index - $start_index) / $start_index)), PHP_EOL;
         echo '年化:'. (($profit + $empty_profit) / $money / (($total_have_days+$empty_days) / 365)), PHP_EOL;
         echo '单次购买年化:'. ($money * (($end_index - $start_index) / $start_index) / $money / (($total_have_days+$empty_days) / 365)), PHP_EOL;
+        echo $tmp_profit + $empty_profit;
     }
 
     public function test()
     {
-        $principal = 100000;
-        $payment = 2400;
+        $principal = 10000;
+        $payment = 2000;
         $guess = 0.10;
-        $startDate = '2017-04-30';
+        $startDate = '2017-04-18';
         $calculator = new Calculator();
 
         $payments = [
-            '2017-04-30' => $payment + 400,
-            '2017-05-31' => $payment,
-            '2017-06-30' => $payment,
-            '2017-07-31' => $payment,
-            // More dates
-            '2019-12-31' => $payment,
-            '2020-01-31' => $payment,
-            '2020-02-28' => $payment,
-            '2020-03-31' => 31200,
+            '2017-05-31' => -$payment,
+            '2017-06-30' => -$payment,
+//            '2017-07-31' => -$payment,
+            '2018-04-18' => 15000,
         ];
 
         $interest = $calculator->withSpecifiedPayments($principal, $startDate, $payments, $guess);
 
         echo $interest; // 0.084870
+    }
+
+    private function computeXirr($first_money, $add_money_set, $start_date)
+    {
+        $calculator = new Calculator();
+        $radio = $calculator->withSpecifiedPayments($first_money, $start_date, $add_money_set, 0.01);
+        return round($radio * 100 , 2). '%';
+    }
+
+    private function computeProfit()
+    {
+
     }
 }

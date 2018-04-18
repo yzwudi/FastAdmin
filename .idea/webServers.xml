@@ -3,11 +3,10 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="f666152b-5f4e-4001-8e9f-227300eb7bc8" name="腾讯云" url="http://140.143.241.69">
-        <fileTransfer host="140.143.241.69" port="22" rootFolder="/data/beta_fastadmin" accessType="SFTP">
+        <fileTransfer host="140.143.241.69" port="22" rootFolder="/data/beta_fastadmin" accessType="SFTP" password="dfe1dfdcdf9edff9df9edfeedfe2dfd3dfdddfeddff0dff8df9cdfe8" username="root">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>
-          <option name="port" value="22" />
         </fileTransfer>
       </webServer>
     </option>

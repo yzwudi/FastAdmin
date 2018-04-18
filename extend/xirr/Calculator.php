@@ -33,9 +33,13 @@ final class Calculator
      *
      * @return float
      */
-    public function withSpecifiedPayments(int $principal, string $startDate, array $payments, float $guess): float
+    public function withSpecifiedPayments(int $principal, string $startDate, array $payments, float $guess, $type = 'fund'): float
     {
-        list($values, $days) = $this->preparePayments($principal, $startDate, $payments);
+        if ($type === 'fund') {
+            list($values, $days) = $this->preparePaymentsFund($principal, $startDate, $payments);
+        } else {
+            list($values, $days) = $this->preparePayments($principal, $startDate, $payments);
+        }
 
         $fx = function ($x) use ($days, $values) {
             $sum = 0;
@@ -100,6 +104,23 @@ final class Calculator
             $values[] = $payment;
             $days[] = 1 + $startDate->diff(new \DateTime($date))->days;
         }
+
+        jdump([$values, $days]);exit;
+        return [$values, $days];
+    }
+
+    private function preparePaymentsFund(int $principal, string $startDate, array $payments)
+    {
+        $values = [-1 * $principal];
+        $days = [1];
+        $startDate = new \DateTimeImmutable($startDate);
+
+        foreach ($payments as $date => $payment) {
+            $values[] = $payment;
+            $days[] = 1 + $startDate->diff(new \DateTime($date))->days;
+        }
+
+//        jdump([$values, $days]);exit;
         return [$values, $days];
     }
 }
