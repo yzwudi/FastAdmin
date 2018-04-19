@@ -18,9 +18,9 @@ return [
     // 应用命名空间
     'app_namespace'          => 'app',
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => ENV_STAGE == 'prod' ? false : (IS_CLI ? true : false),
     // 应用Trace
-    'app_trace'              => ENV_STAGE == 'prod' ? false : true,
+    'app_trace'              => ENV_STAGE == 'prod' ? false : (IS_CLI ? false : true),
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
